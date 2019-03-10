@@ -11,7 +11,6 @@ https://finance.yahoo.com/quote/GOOGL/history?period1=0000000&period2=1552183545
 import requests
 from time import time
 import json
-from tqdm import tqdm
 
 # ######################################################################################################################
 # Constants
@@ -59,7 +58,7 @@ def is_json(my_json):
     return True
 
 
-def get_history_csv(ticker, start_time=00000000000, end_time=int(time())):
+def get_history_csv(ticker, start_time=00000000000, end_time=int(time()), download_dir=None):
     """
     Get the share history as a CSV
     :param ticker: name of share ticker
@@ -94,9 +93,14 @@ def get_history_csv(ticker, start_time=00000000000, end_time=int(time())):
         exit("ERROR RESPONSE")
 
     else:
-        response.raw.decode_content = True
-        print(response.text, file=open(SAVE_DIR + "/" + ticker + ".csv", "w"))
-        print("done.")
+        if download_dir is None:
+            response.raw.decode_content = True
+            print(response.text, file=open(SAVE_DIR + "/" + ticker + ".csv", "w"))
+            print("done.")
+        else:
+            response.raw.decode_content = True
+            print(response.text, file=open(download_dir + "/" + ticker + ".csv", "w"))
+            print("done.")
 
 
 def main():
