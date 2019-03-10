@@ -58,14 +58,17 @@ def is_json(my_json):
     return True
 
 
-def get_history_csv(ticker, start_time=00000000000, end_time=int(time()), download_dir=None):
+def get_history_csv(ticker, start_time=00000000000, end_time=int(time()), download_dir=None, verbose=False):
     """
     Get the share history as a CSV
+    :param download_dir:
+    :param verbose:
     :param ticker: name of share ticker
     :param start_time: unix time
     :param end_time: unix time
     """
-    print("Getting", ticker, "...", end=" ")
+    if verbose:
+        print("Getting", ticker, "...", end=" ")
 
     # # setup the base url
     # quote_url = BASE_URL + "/" + ticker + "/" + HISTORY_PAGE
@@ -96,11 +99,12 @@ def get_history_csv(ticker, start_time=00000000000, end_time=int(time()), downlo
         if download_dir is None:
             response.raw.decode_content = True
             print(response.text, file=open(SAVE_DIR + "/" + ticker + ".csv", "w"))
-            print("done.")
         else:
             response.raw.decode_content = True
             print(response.text, file=open(download_dir + "/" + ticker + ".csv", "w"))
-            print("done.")
+
+    if verbose:
+        print("done.")
 
 
 def main():
