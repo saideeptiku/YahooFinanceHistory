@@ -11,6 +11,7 @@ https://finance.yahoo.com/quote/GOOGL/history?period1=0000000&period2=1552183545
 import requests
 from time import time
 import json
+import os
 
 # ######################################################################################################################
 # Constants
@@ -29,7 +30,7 @@ PAYLOAD = {
     'interval': '1d'
 }
 
-TICKER_SYMBOLS = ["GOOGL", ]
+TICKER_SYMBOLS = ["AAPL", ]
 
 SAVE_DIR = "history"
 
@@ -43,6 +44,11 @@ SAVE_DIR = "history"
 # https://finance.yahoo.com/quote/GOOGL/history?period1=0000000&period2=1552183545&interval=1d
 # https://query1.finance.yahoo.com/v7/finance/download/GOOGL?period1=1092895200&period2=1552114800&interval=1d&events=history
 #
+
+def mkdir_if_not_exist(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
 
 def drop_binary(binary_literal):
     """ fixes b'' in a string"""
@@ -89,8 +95,6 @@ def get_history_csv(ticker, start_time=00000000000, end_time=int(time()), downlo
     # make download query
     response = requests.post(csv_url, params=PAYLOAD)  # , cookies=cookie_jar)
 
-    print(response.text)
-
     # check if response is not a json error message
     if is_json(response.text):
         exit("ERROR RESPONSE")
@@ -100,6 +104,7 @@ def get_history_csv(ticker, start_time=00000000000, end_time=int(time()), downlo
             response.raw.decode_content = True
             print(response.text, file=open(SAVE_DIR + "/" + ticker + ".csv", "w"))
         else:
+            mkdir_if_not_exist(download_dir)
             response.raw.decode_content = True
             print(response.text, file=open(download_dir + "/" + ticker + ".csv", "w"))
 
